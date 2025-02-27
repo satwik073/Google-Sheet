@@ -67,13 +67,13 @@ export const Cell: React.FC<CellProps> = ({ id, row, col, style = {} }) => {
     }
   };
 
-  // Build cell style
   const cellStyle = {
     ...style,
     fontWeight: cellData.style.bold ? 'bold' : 'normal',
     fontStyle: cellData.style.italic ? 'italic' : 'normal',
     fontSize: `${cellData.style.fontSize || 14}px`,
     color: cellData.style.color || '#000000',
+    textDecoration: `${cellData?.style?.underline ? 'underline' : ''} ${cellData?.style.strikethrough ? 'line-through' : ''}`.trim(),
     backgroundColor: cellData.style.backgroundColor || '#ffffff',
     textAlign: cellData.style.textAlign || 'left',
     fontFamily: cellData.style.fontFamily || 'Arial, sans-serif',

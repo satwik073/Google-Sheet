@@ -3,6 +3,8 @@ import { useSheetStore } from '../store/useSheetStore';
 import { 
   Bold, 
   Italic, 
+  Underline, // Import underline icon
+  Strikethrough, // Import strikethrough icon
   Type, 
   Palette, 
   AlignLeft, 
@@ -78,45 +80,49 @@ export const Toolbar: React.FC = () => {
         {/* Text Style Section */}
         <div className="flex items-center gap-1 border-r pr-2">
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              currentCell?.style.bold ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.bold ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ bold: !currentCell?.style.bold })}
           >
             <Bold size={18} />
           </button>
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              currentCell?.style.italic ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.italic ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ italic: !currentCell?.style.italic })}
           >
             <Italic size={18} />
+          </button>
+          {/* Add Underline Button */}
+          <button
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.underline ? 'bg-gray-200' : ''}`}
+            onClick={() => handleStyleChange({ underline: !currentCell?.style.underline })}
+          >
+            <Underline size={18} />
+          </button>
+          {/* Add Strikethrough Button */}
+          <button
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.strikethrough ? 'bg-gray-200' : ''}`}
+            onClick={() => handleStyleChange({ strikethrough: !currentCell?.style.strikethrough })}
+          >
+            <Strikethrough size={18} />
           </button>
         </div>
 
         {/* Text Alignment Section */}
         <div className="flex items-center gap-1 border-r pr-2">
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              currentCell?.style.textAlign === 'left' ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.textAlign === 'left' ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ textAlign: 'left' })}
           >
             <AlignLeft size={18} />
           </button>
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              currentCell?.style.textAlign === 'center' ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.textAlign === 'center' ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ textAlign: 'center' })}
           >
             <AlignCenter size={18} />
           </button>
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              currentCell?.style.textAlign === 'right' ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.textAlign === 'right' ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ textAlign: 'right' })}
           >
             <AlignRight size={18} />
@@ -181,9 +187,7 @@ export const Toolbar: React.FC = () => {
         {/* Find & Replace Button */}
         <div className="flex items-center gap-1">
           <button
-            className={`p-1 hover:bg-gray-100 rounded ${
-              findReplaceOpen ? 'bg-gray-200' : ''
-            }`}
+            className={`p-1 hover:bg-gray-100 rounded ${findReplaceOpen ? 'bg-gray-200' : ''}`}
             onClick={() => setFindReplaceOpen(!findReplaceOpen)}
           >
             <Search size={18} />
