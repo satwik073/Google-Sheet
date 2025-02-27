@@ -1,6 +1,5 @@
 import { evaluate } from 'mathjs';
 import { CellData } from '../types/sheet';
-
 export function evaluateFormula(formula: string, cells: { [key: string]: CellData }): string {
   if (!formula.startsWith('=')) {
     return formula;
@@ -24,7 +23,9 @@ export function evaluateFormula(formula: string, cells: { [key: string]: CellDat
       return calculateConcatenate(cleanFormula, cells);
     } else if (cleanFormula.startsWith('IF(')) {
       return calculateIf(cleanFormula, cells);
-    } 
+    } else if (cleanFormula.startsWith('REMOVE_DUPLICATES(')) {
+      return calculateRemoveDuplicates(cleanFormula, cells);
+    }
     // Text formatting functions
     else if (cleanFormula.startsWith('UPPER(')) {
       return formatUpper(cleanFormula, cells);
@@ -41,7 +42,6 @@ export function evaluateFormula(formula: string, cells: { [key: string]: CellDat
     // For general expressions, replace cell references with their values
     const expression = cleanFormula.replace(/([A-Z]+[0-9]+)/g, (match) => {
       const cellValue = cells[match]?.value || '0';
-      // If it's not a number, wrap in quotes
       return isNaN(Number(cellValue)) ? `"${cellValue}"` : cellValue;
     });
     
@@ -51,6 +51,7 @@ export function evaluateFormula(formula: string, cells: { [key: string]: CellDat
     return '#ERROR!';
   }
 }
+
 
 // Get cell reference from a formula like UPPER(A1)
 function getCellRefFromFormula(formula: string): string | null {
@@ -121,35 +122,32 @@ function calculateLen(formula: string, cells: { [key: string]: CellData }): stri
 }
 
 function extractRange(expression: string): string[] {
-  // Parse the range expression like SUM(A1:B3)
   const rangeMatch = expression.match(/\(([A-Z]+[0-9]+):([A-Z]+[0-9]+)\)/);
   if (!rangeMatch) return [];
-  
+
   const start = rangeMatch[1];
   const end = rangeMatch[2];
-  
-  // Extract column letters and row numbers
+
   const startCol = start.match(/[A-Z]+/)?.[0] || '';
   const startRow = parseInt(start.match(/\d+/)?.[0] || '0');
   const endCol = end.match(/[A-Z]+/)?.[0] || '';
   const endRow = parseInt(end.match(/\d+/)?.[0] || '0');
-  
-  // Convert column letters to ASCII codes for easier iteration
+
   const startColCode = startCol.charCodeAt(0);
   const endColCode = endCol.charCodeAt(0);
-  
+
   const cells: string[] = [];
-  
-  // Iterate through the range
+
   for (let colCode = startColCode; colCode <= endColCode; colCode++) {
     const col = String.fromCharCode(colCode);
     for (let row = startRow; row <= endRow; row++) {
       cells.push(`${col}${row}`);
     }
   }
-  
+
   return cells;
 }
+
 
 function calculateSum(expression: string, cells: { [key: string]: CellData }): string {
   const range = extractRange(expression);
@@ -311,4 +309,25 @@ export function formatDate(dateString: string, format: string): string {
   } catch (error) {
     return '#ERROR!';
   }
+}
+
+function calculateRemoveDuplicates(expression: string, cells: { [key: string]: CellData }): string {
+  // Extract cell references from REMOVE_DUPLICATES(A1, A2, A3, B1, C2)
+  const matches = expression.match(/REMOVE_DUPLICATES\((.*)\)/);
+  if (!matches) return '#ERROR!';
+
+  const cellRefs = matches[1]
+    .split(',')
+    .map(cell => cell.trim())  // Trim each reference
+    .filter(cell => cell !== '');  // Remove empty cells
+
+  // Extract unique values from the provided cells
+  const uniqueValues = Array.from(new Set(cellRefs.map(cellId => cells[cellId]?.value).filter(value => value !== undefined)));
+
+  if (uniqueValues.length === 0) {
+    return '#ERROR!';
+  }
+
+  // Join unique values into a string (you can adjust this separator as needed)
+  return uniqueValues.join(', ');
 }
