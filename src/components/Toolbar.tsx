@@ -4,8 +4,8 @@ import { useSheetStore } from '../store/useSheetStore';
 import {
   Bold,
   Italic,
-  Underline, // Import underline icon
-  Strikethrough, // Import strikethrough icon
+  Underline,
+  Strikethrough,
   Type,
   Palette,
   AlignLeft,
@@ -38,6 +38,9 @@ export const Toolbar: React.FC = () => {
   const [findText, setFindText] = useState('');
   const [replaceText, setReplaceText] = useState('');
 
+  // Available font sizes array
+  const fontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
+
   const handleStyleChange = (styleUpdate: any) => {
     if (!selectedCell) return;
     setCellStyle(selectedCell, styleUpdate);
@@ -49,6 +52,25 @@ export const Toolbar: React.FC = () => {
   };
 
   const currentCell = selectedCell ? cells[selectedCell] : null;
+  const currentFontSize = currentCell?.style.fontSize || 14;
+
+  // Function to increase font size to the next size in the array
+  const increaseFontSize = () => {
+    const currentIndex = fontSizes.indexOf(currentFontSize);
+    if (currentIndex < fontSizes.length - 1) {
+      const newSize = fontSizes[currentIndex + 1];
+      handleStyleChange({ fontSize: newSize });
+    }
+  };
+
+  // Function to decrease font size to the previous size in the array
+  const decreaseFontSize = () => {
+    const currentIndex = fontSizes.indexOf(currentFontSize);
+    if (currentIndex > 0) {
+      const newSize = fontSizes[currentIndex - 1];
+      handleStyleChange({ fontSize: newSize });
+    }
+  };
 
   // Font families
   const fontFamilies = [
@@ -62,7 +84,7 @@ export const Toolbar: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col  mb-1 mx-6">
+    <div className="flex flex-col mb-1 mx-6">
       <div className="flex bg-[#f0f4f9] rounded-full items-center gap-5 p-1 ">
         {/* Undo/Redo Section */}
         <div className="flex items-center gap-1 border-r pr-2">
@@ -104,14 +126,12 @@ export const Toolbar: React.FC = () => {
           >
             <Italic size={16} />
           </button>
-          {/* Add Underline Button */}
           <button
             className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.underline ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ underline: !currentCell?.style.underline })}
           >
             <Underline size={16} />
           </button>
-          {/* Add Strikethrough Button */}
           <button
             className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.strikethrough ? 'bg-gray-200' : ''}`}
             onClick={() => handleStyleChange({ strikethrough: !currentCell?.style.strikethrough })}
@@ -121,7 +141,7 @@ export const Toolbar: React.FC = () => {
         </div>
 
         {/* Text Alignment Section */}
-        <div className="flex items-center border-r gap-5  pr-2">
+        <div className="flex items-center border-r gap-5 pr-2">
           <div className="flex bg-[#f0f4f9] rounded-full items-center gap-2 p-2 ">
             <button
               className={`p-1 hover:bg-gray-100 rounded ${currentCell?.style.textAlign === 'left' ? 'bg-gray-200' : ''}`}
@@ -148,19 +168,33 @@ export const Toolbar: React.FC = () => {
         <div className="flex items-center gap-2 border-r pr-2">
           <div className="flex items-center gap-5">
             <div className='mx-3 flex items-center gap-2'>
-              <Minus size={16} />
+              <button 
+                className="p-1 hover:bg-gray-100 rounded" 
+                onClick={decreaseFontSize}
+                disabled={fontSizes.indexOf(currentFontSize) === 0}
+              >
+                <Minus size={16} />
+              </button>
+              
               <select
                 className="border rounded p-1 custom-select"
-                value={currentCell?.style.fontSize || 14}
+                value={currentFontSize}
                 onChange={(e) => handleStyleChange({ fontSize: Number(e.target.value) })}
               >
-                {[8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72].map((size) => (
+                {fontSizes.map((size) => (
                   <option key={size} value={size} className='text-center'>
                     {size}
                   </option>
                 ))}
               </select>
-              <Plus size={16} />
+              
+              <button 
+                className="p-1 hover:bg-gray-100 rounded" 
+                onClick={increaseFontSize}
+                disabled={fontSizes.indexOf(currentFontSize) === fontSizes.length - 1}
+              >
+                <Plus size={16} />
+              </button>
             </div>
           </div>
 
@@ -169,7 +203,6 @@ export const Toolbar: React.FC = () => {
               className="border rounded p-1"
               value={currentCell?.style.fontFamily || 'Arial, sans-serif'}
               onChange={(e) => handleStyleChange({ fontFamily: e.target.value })}
-
             >
               {fontFamilies.map((font) => (
                 <option key={font.value} value={font.value}>
@@ -192,7 +225,7 @@ export const Toolbar: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center flex-col gap-3 mt-0.5" title="Text Color">
+          <div className="flex items-center flex-col gap-3 mt-0.5" title="Background Color">
             <PaintBucket size={16} className='-mb-2 pt-1' />
             <input
               type="color"
@@ -201,11 +234,7 @@ export const Toolbar: React.FC = () => {
               className="w-9 h-3 p-0 border-0"
             />
           </div>
-
         </div>
-
-        {/* Find & Replace Button */}
-
       </div>
 
       {/* Find & Replace Panel */}
