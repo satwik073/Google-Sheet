@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root, html, body {
+    background-color: '#f9fbfd';
+}
+body {
+    font-family: 'DM Sans', serif;
+    background-color: '#f9fbfd';
+}
+
+.custom-select {
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    appearance: none; /* For modern browsers */
+    background-image: none; /* Removes the default dropdown icon */
+    text-align: center; /* Centers the text inside the dropdown */
+    padding-right: 30px; /* Optional: Adjust to avoid overlap */
+  }
+  
+  .custom-select option {
+    text-align: center; /* Centers text inside each option */
+  }
+  

@@ -4,6 +4,9 @@ import { FormulaBar } from './components/FormulaBar';
 import { Grid } from './components/Grid';
 import { useSheetStore } from './store/useSheetStore';
 import ChartComponent from './components/ChartComponent'; // Import the ChartComponent
+import StaticToolbar from './Global/StaticToolbar';
+import ImageLinks from './Assets';
+import { GOOGLE_SHEETS_CONSTANT } from './Constants/constants';
 
 // Default values
 const DEFAULT_CELL_WIDTH = 100;
@@ -40,7 +43,7 @@ function App() {
       totalColumns: state.totalColumns,
     });
 
-    const updatedSpreadsheets = spreadsheets.map(spreadsheet => 
+    const updatedSpreadsheets = spreadsheets.map(spreadsheet =>
       spreadsheet.id === currentSpreadsheetId ? { ...spreadsheet, data: serializedState } : spreadsheet
     );
 
@@ -53,7 +56,7 @@ function App() {
   // Initialize default column widths for a given totalColumns
   const initializeColumnWidths = (totalColumns, existingWidths = {}) => {
     const columnWidths = { ...existingWidths };
-    
+
     // Ensure each column has a width
     for (let i = 0; i < totalColumns; i++) {
       const colId = getColumnLabel(i);
@@ -61,7 +64,7 @@ function App() {
         columnWidths[colId] = DEFAULT_CELL_WIDTH;
       }
     }
-    
+
     return columnWidths;
   };
 
@@ -71,11 +74,11 @@ function App() {
     if (spreadsheet) {
       try {
         const state = JSON.parse(spreadsheet.data || '{}');
-        
+
         // Ensure we have valid data and column widths before setting state
         const totalColumns = Math.max(1, state.totalColumns || 10);
         const columnWidths = initializeColumnWidths(totalColumns, state.columnWidths || {});
-        
+
         const validatedState = {
           cells: state.cells || {},
           columnWidths: columnWidths,
@@ -83,10 +86,10 @@ function App() {
           totalRows: Math.max(1, state.totalRows || 10),
           totalColumns: totalColumns,
         };
-        
+
         // Reset the store with the loaded state
         useSheetStore.setState(validatedState);
-        
+
         setLastSavedState(spreadsheet.data);
         setCurrentSpreadsheetId(id);
         setIsDirty(false);
@@ -94,7 +97,7 @@ function App() {
         console.error("Error loading spreadsheet:", error);
         // Handle corrupted data by setting defaults
         const defaultColumnWidths = initializeColumnWidths(10);
-        
+
         useSheetStore.setState({
           cells: {},
           columnWidths: defaultColumnWidths,
@@ -113,10 +116,10 @@ function App() {
       const confirmCreate = window.confirm("You have unsaved changes. Create new spreadsheet anyway?");
       if (!confirmCreate) return;
     }
-    
+
     // Initialize column widths for the new spreadsheet
     const defaultColumnWidths = initializeColumnWidths(100);
-    
+
     const newSpreadsheetState = {
       cells: {},
       columnWidths: defaultColumnWidths,
@@ -124,7 +127,7 @@ function App() {
       totalRows: 100,
       totalColumns: 100,
     };
-    
+
     const newSpreadsheet = {
       id: Date.now().toString(),
       name: `Spreadsheet ${spreadsheets.length + 1}`,
@@ -135,10 +138,10 @@ function App() {
     localStorage.setItem('spreadsheets', JSON.stringify(updatedSpreadsheets));
     setSpreadsheets(updatedSpreadsheets);
     setCurrentSpreadsheetId(newSpreadsheet.id);
-    
+
     // Set the state directly to ensure immediate update
     useSheetStore.setState(newSpreadsheetState);
-    
+
     setLastSavedState(newSpreadsheet.data);
     setIsDirty(false);
   }, [isDirty, spreadsheets]);
@@ -148,16 +151,16 @@ function App() {
     const updatedSpreadsheets = spreadsheets.filter(sp => sp.id !== id);
     localStorage.setItem('spreadsheets', JSON.stringify(updatedSpreadsheets));
     setSpreadsheets(updatedSpreadsheets);
-    
+
     if (currentSpreadsheetId === id && updatedSpreadsheets.length > 0) {
       setCurrentSpreadsheetId(updatedSpreadsheets[0].id);
       loadSpreadsheet(updatedSpreadsheets[0].id);
     } else if (updatedSpreadsheets.length === 0) {
       setCurrentSpreadsheetId(null);
-      
+
       // Initialize default column widths
       const defaultColumnWidths = initializeColumnWidths(10);
-      
+
       useSheetStore.setState({
         cells: {},
         columnWidths: defaultColumnWidths,
@@ -172,7 +175,7 @@ function App() {
 
   // Rename a spreadsheet
   const renameSpreadsheet = useCallback((id, newName) => {
-    const updatedSpreadsheets = spreadsheets.map(spreadsheet => 
+    const updatedSpreadsheets = spreadsheets.map(spreadsheet =>
       spreadsheet.id === id ? { ...spreadsheet, name: newName } : spreadsheet
     );
 
@@ -223,11 +226,25 @@ function App() {
   }, [lastSavedState]);
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="p-4 bg-gray-100 border-b flex justify-between">
+    <div className="h-screen flex flex-col bg-gray">
+      <StaticToolbar imageLink={ImageLinks?._GoogleSheetLogo}
+        titleContent='Untitled spreadsheet'
+        content={GOOGLE_SHEETS_CONSTANT?.static_toolbar_config}
+        isIconDisplay = {false}
+      />
+      <Toolbar/>
+      <FormulaBar />
+      <div className="flex-1 p-0 overflow-hidden">
+        {showChart ? (
+          <ChartComponent data={getChartData()} />
+        ) : (
+          <Grid />
+        )}
+      </div>
+      <div className="p-4  border-b flex justify-between">
         <div className="flex items-center">
-          <select 
-            value={currentSpreadsheetId || ''} 
+          <select
+            value={currentSpreadsheetId || ''}
             onChange={(e) => loadSpreadsheet(e.target.value)}
             className="p-2 border rounded"
           >
@@ -235,16 +252,16 @@ function App() {
               <option key={sp.id} value={sp.id}>{sp.name}</option>
             ))}
           </select>
-          <button 
-            onClick={createNewSpreadsheet} 
+          <button
+            onClick={createNewSpreadsheet}
             className="ml-2 p-2 bg-blue-500 text-white rounded"
           >
             New Spreadsheet
           </button>
           {currentSpreadsheetId && (
             <>
-              <button 
-                onClick={() => deleteSpreadsheet(currentSpreadsheetId)} 
+              <button
+                onClick={() => deleteSpreadsheet(currentSpreadsheetId)}
                 className="ml-2 p-2 bg-red-500 text-white rounded"
               >
                 Delete Spreadsheet
@@ -274,24 +291,15 @@ function App() {
             </>
           )}
         </div>
-        <button 
-          onClick={saveSpreadsheet} 
-          disabled={!isDirty} 
+        <button
+          onClick={saveSpreadsheet}
+          disabled={!isDirty}
           className="p-2 bg-green-500 text-white rounded disabled:bg-gray-300"
         >
           Save
         </button>
       </div>
 
-      <Toolbar />
-      <FormulaBar />
-      <div className="flex-1 overflow-hidden">
-        {showChart ? (
-          <ChartComponent data={getChartData()} />
-        ) : (
-          <Grid />
-        )}
-      </div>
     </div>
   );
 }

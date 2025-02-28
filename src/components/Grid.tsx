@@ -5,7 +5,7 @@ import { PlusIcon, MinusIcon, MoreHorizontalIcon } from 'lucide-react';
 
 const DEFAULT_CELL_WIDTH = 100;
 const DEFAULT_CELL_HEIGHT = 24;
-const DEFAULT_HEADER_WIDTH = 40; // Width for row headers (1, 2, 3...)
+const DEFAULT_HEADER_WIDTH = 30; // Width for row headers (1, 2, 3...)
 
 export const Grid: React.FC = () => {
   // Get store state and actions
@@ -27,7 +27,8 @@ export const Grid: React.FC = () => {
   // State for context menus
   const [showColMenu, setShowColMenu] = useState<{ index: number, x: number, y: number } | null>(null);
   const [showRowMenu, setShowRowMenu] = useState<{ index: number, x: number, y: number } | null>(null);
-  
+  const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
+
   // State to trigger re-renders when spreadsheet changes
   const [gridKey, setGridKey] = useState(Date.now());
   
@@ -208,7 +209,7 @@ export const Grid: React.FC = () => {
       >
         {/* Header cell (top-left corner) */}
         <div 
-          className="bg-gray-100 border border-gray-300 p-1 text-center flex items-center justify-center sticky top-0 left-0 z-10"
+          className=" border border-gray-400 p-1 text-center flex items-center justify-center sticky top-0 left-0 z-10"
           onClick={() => {
             setShowColMenu(null);
             setShowRowMenu(null);
@@ -229,8 +230,9 @@ export const Grid: React.FC = () => {
         {Array.from({ length: validColumns }).map((_, i) => (
           <div 
             key={`header-${i}`} 
-            className="bg-gray-100 border border-gray-300 p-1 text-center relative flex items-center justify-center sticky top-0 z-10"
+            className="border border-gray-400 text-[12px] text-center flex items-center justify-center sticky top-0 z-10"
             onClick={() => {
+              setSelectedColumn(i);
               setShowColMenu(null);
               setShowRowMenu(null);
             }}
@@ -238,10 +240,10 @@ export const Grid: React.FC = () => {
           >
             <div className="flex items-center space-x-1">
               <span>{getColumnLabel(i)}</span>
-              <MoreHorizontalIcon 
+              {/* <MoreHorizontalIcon 
                 className="w-4 h-4 text-gray-500 hover:text-gray-700 cursor-pointer" 
                 onClick={(e) => handleColumnOptions(e, i)}
-              />
+              /> */}
             </div>
             <div 
               className="absolute right-0 top-0 h-full w-1 bg-gray-400 opacity-0 hover:opacity-100 cursor-col-resize"
@@ -255,7 +257,7 @@ export const Grid: React.FC = () => {
           <React.Fragment key={`row-${row}`}>
             {/* Row header */}
             <div 
-              className="bg-gray-100 border border-gray-300 p-1 text-center relative flex items-center justify-center sticky left-0 z-10"
+              className="border-b border-r border-gray-400 text-center text-[12px]  flex items-center justify-center sticky left-0 z-10"
               onClick={() => {
                 setShowColMenu(null);
                 setShowRowMenu(null);
@@ -264,10 +266,10 @@ export const Grid: React.FC = () => {
             >
               <div className="flex items-center space-x-1">
                 <span>{row + 1}</span>
-                <MoreHorizontalIcon 
+                {/* <MoreHorizontalIcon 
                   className="w-4 h-4 text-gray-500 hover:text-gray-700 cursor-pointer" 
                   onClick={(e) => handleRowOptions(e, row)}
-                />
+                /> */}
               </div>
               <div 
                 className="absolute bottom-0 left-0 w-full h-1 bg-gray-400 opacity-0 hover:opacity-100 cursor-row-resize"
@@ -284,7 +286,8 @@ export const Grid: React.FC = () => {
                 col={col}
                 style={{
                   width: columnWidths[getColumnLabel(col)] || DEFAULT_CELL_WIDTH,
-                  height: rowHeights[`${row + 1}`] || DEFAULT_CELL_HEIGHT
+                  height: rowHeights[`${row + 1}`] || DEFAULT_CELL_HEIGHT,
+                  backgroundColor: selectedColumn === col ? '#e0f7fa' : 'transparent',
                 }}
               />
             ))}

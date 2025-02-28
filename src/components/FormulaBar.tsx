@@ -19,7 +19,7 @@ export const FormulaBar: React.FC = () => {
 
   const handleFormulaSubmit = () => {
     if (!selectedCell) return;
-    
+
     if (formula.startsWith('=')) {
       setCellFormula(selectedCell, formula);
     } else {
@@ -28,12 +28,12 @@ export const FormulaBar: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 border-b">
-      <div className="font-mono bg-gray-100 px-2 py-1 rounded">
+    <div className="flex items-center pb-3 px-2p-0 border-b ">
+      <div className="font-mono w-[5%] bg-white text-black px-3  border-r border-[#dcdfe1]">
         {selectedCell || ''}
       </div>
       <input
-        className="flex-1 px-2 py-1 border rounded"
+        className="flex-1 px-4 py-1 rounded-md focus:outline-none focus:ring-0 focus:ring-offset-transparent"
         value={formula}
         onChange={handleFormulaChange}
         onBlur={handleFormulaSubmit}
