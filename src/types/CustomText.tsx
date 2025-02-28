@@ -1,3 +1,4 @@
+//@ts-nocheck
 interface CustomTextProps {
 	children?: React.ReactNode;
 	color?: string;

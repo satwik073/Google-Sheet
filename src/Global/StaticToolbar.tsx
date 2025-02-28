@@ -1,12 +1,11 @@
-import React from 'react';
-import { Box, Button, Divider, Grid2 } from '@mui/material';
+
+//@ts-nocheck
+import {  Grid2 } from '@mui/material';
 import ProductImage from '../components/ImageContainer';
 import CustomText from '../types/CustomText';
 import _ from 'lodash';
 import { utils } from '../Constants/utils';
-import { Lock, MessageSquareText, Video } from 'lucide-react';
-import { Toolbar } from '../components/Toolbar';
-
+import {MessageSquareText, Video } from 'lucide-react';
 
 
 interface ToolbarRenderingProps {

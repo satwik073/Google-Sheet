@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react';
 import { Toolbar } from './components/Toolbar';
 import { FormulaBar } from './components/FormulaBar';

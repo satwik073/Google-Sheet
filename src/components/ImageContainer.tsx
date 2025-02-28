@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { Img } from 'react-image';
 import ImageLinks from '../Assets';

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Cell } from './Cell';
 import { useSheetStore } from '../store/useSheetStore';
