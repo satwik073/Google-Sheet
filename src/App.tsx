@@ -31,7 +31,7 @@ function App() {
     if (savedSpreadsheets.length > 0) {
       setCurrentSpreadsheetId(savedSpreadsheets[0].id);
       loadSpreadsheet(savedSpreadsheets[0].id);
-    }else {
+    } else {
       // Set a default spreadsheet when none exist
       const defaultSpreadsheet = {
         id: 'Sheet1',
@@ -252,12 +252,15 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-gray">
-      <StaticToolbar imageLink={ImageLinks?._GoogleSheetLogo}
+      <StaticToolbar
+        imageLink={ImageLinks?._GoogleSheetLogo}
         titleContent='Untitled spreadsheet'
         content={GOOGLE_SHEETS_CONSTANT?.static_toolbar_config}
-        isIconDisplay = {false}
+        isIconDisplay={false}
+        isSaveDisabled={!isDirty}
+        onSave={saveSpreadsheet}
       />
-      <Toolbar/>
+      <Toolbar />
       <FormulaBar />
       <div className="flex-1 p-0 overflow-hidden">
         {showChart ? (
@@ -267,13 +270,13 @@ function App() {
         )}
       </div>
       <div className=" p-1 border-t  flex justify-between">
-        
+
         <div className="flex items-center">
-        <button
+          <button
             onClick={createNewSpreadsheet}
             className="ml-2 p-2  rounded"
           >
-            <Plus size={16}/>
+            <Plus size={16} />
           </button>
           <select
             value={currentSpreadsheetId || 'Sheet 1'}
@@ -285,14 +288,14 @@ function App() {
               <option key={sp.id} value={sp.id}>{sp.name}</option>
             ))}
           </select>
-     
+
           {currentSpreadsheetId && (
             <>
               <button
                 onClick={() => deleteSpreadsheet(currentSpreadsheetId)}
                 className="ml-2 "
               >
-                <Trash2Icon size={18}/>
+                <Trash2Icon size={18} />
               </button>
               <input
                 type="text"
@@ -308,7 +311,7 @@ function App() {
                 }}
                 className="ml-2 "
               >
-                <Edit2Icon  size={18}/>
+                <Edit2Icon size={18} />
               </button>
               {/* <button
                 onClick={() => setShowChart(!showChart)}
@@ -319,13 +322,13 @@ function App() {
             </>
           )}
         </div>
-        <button
+        {/* <button
           onClick={saveSpreadsheet}
           disabled={!isDirty}
           className="p-2 bg-green-500 text-white rounded disabled:bg-gray-300"
         >
           Save
-        </button>
+        </button> */}
       </div>
 
     </div>

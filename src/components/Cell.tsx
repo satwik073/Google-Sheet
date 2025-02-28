@@ -30,6 +30,7 @@ export const Cell: React.FC<CellProps> = ({ id, row, col, style = {} }) => {
   // Handle cell selection
   const handleClick = () => {
     setSelectedCell(id);
+    setIsEditing(true);
   };
 
   // Handle value change
@@ -92,7 +93,7 @@ export const Cell: React.FC<CellProps> = ({ id, row, col, style = {} }) => {
     <div
       className="cell-container"
       onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
+     
       style={{ position: 'relative', width: '100%', height: '100%' }}
     >
       {isEditing ? (

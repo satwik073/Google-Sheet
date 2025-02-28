@@ -11,6 +11,7 @@ interface ToolbarRenderingProps {
   titleContent: string;
   isIconDisplay?: boolean;
   icons?: { id: string, iconUrl: string }[];
+  isSaveDisabled? : boolean,
   content?: {
     id: string;
     isDisplay: boolean;
@@ -20,12 +21,16 @@ interface ToolbarRenderingProps {
     permissions?: string[];
     disabled?: boolean;
   }[];
+  onSave?: () => void; 
 }
 
 const StaticToolbar = ({
   imageLink,
   titleContent,
   content = [],
+  isIconDisplay = false,
+  isSaveDisabled = false,
+  onSave
 }: ToolbarRenderingProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(titleContent);
@@ -72,6 +77,17 @@ const StaticToolbar = ({
     }
   };
 
+  // Handle item click based on action
+  const handleItemClick = (action: string | undefined) => {
+    if (!action) return;
+    
+    // Call the appropriate function based on the action
+    if (action === 'saveDocument' && onSave) {
+      onSave();
+    }
+    // Add other action handlers as needed
+  };
+
   return (
     <Grid2 bgcolor={'#f9fbfd'}>
       <Grid2 container display={'flex'} direction={'row'} justifyContent={'space-between'} alignItems={'center'} bgcolor={'#f9fbfd'} p={2}>
@@ -116,7 +132,11 @@ const StaticToolbar = ({
                     <Grid2 key={item.id} display={'flex'} alignItems={'center'}>
                       <CustomText
                         type="Body"
-                        style={{ color: isDisabled, cursor: validationCheck ? 'not-allowed' : 'pointer' }}
+                        style={{ 
+                          color: isDisabled, 
+                          cursor: validationCheck ? 'not-allowed' : 'pointer' 
+                        }}
+                        onClick={() => !validationCheck && handleItemClick(item.action)}
                       >
                         {_.get(item, 'labelContent', '')}
                       </CustomText>
