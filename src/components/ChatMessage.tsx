@@ -10,6 +10,7 @@ interface ChatMessageProps {
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isBot = message.sender === 'bot';
   
+  
   return (
     <div className={`flex gap-3 ${isBot ? 'bg-gray-50' : ''} p-4 rounded-lg`}>
       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
