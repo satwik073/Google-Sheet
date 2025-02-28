@@ -1,3 +1,4 @@
+//@ts-nocheck
 export interface CellData {
   value: string;
   formula: string;

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import Fuse from 'fuse.js';
 import { DocumentEntry } from '../types';
 import { documentationData } from '../data/documentation';

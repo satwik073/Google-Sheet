@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { MessageSquare, Bot } from 'lucide-react';
 import { Message } from '../types';

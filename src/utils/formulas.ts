@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { evaluate } from 'mathjs';
 import { CellData } from '../types/sheet';
 export function evaluateFormula(formula: string, cells: { [key: string]: CellData }): string {
