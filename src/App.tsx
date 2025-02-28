@@ -8,6 +8,7 @@ import ChartComponent from './components/ChartComponent'; // Import the ChartCom
 import StaticToolbar from './Global/StaticToolbar';
 import ImageLinks from './Assets';
 import { GOOGLE_SHEETS_CONSTANT } from './Constants/constants';
+import { Edit2Icon, Plus, Trash, Trash2, Trash2Icon, TrashIcon } from 'lucide-react';
 
 // Default values
 const DEFAULT_CELL_WIDTH = 100;
@@ -30,6 +31,29 @@ function App() {
     if (savedSpreadsheets.length > 0) {
       setCurrentSpreadsheetId(savedSpreadsheets[0].id);
       loadSpreadsheet(savedSpreadsheets[0].id);
+    }else {
+      // Set a default spreadsheet when none exist
+      const defaultSpreadsheet = {
+        id: 'Sheet1',
+        name: 'Sheet 1',
+        data: JSON.stringify({
+          cells: {},
+          columnWidths: initializeColumnWidths(10),
+          rowHeights: {},
+          totalRows: 100,
+          totalColumns: 100,
+        }),
+      };
+      setCurrentSpreadsheetId(defaultSpreadsheet.id);
+      setSpreadsheets([defaultSpreadsheet]);
+      useSheetStore.setState({
+        cells: {},
+        columnWidths: initializeColumnWidths(10),
+        rowHeights: {},
+        totalRows: 100,
+        totalColumns: 100,
+      });
+      setLastSavedState(defaultSpreadsheet.data);
     }
   }, []);
 
@@ -131,7 +155,7 @@ function App() {
 
     const newSpreadsheet = {
       id: Date.now().toString(),
-      name: `Spreadsheet ${spreadsheets.length + 1}`,
+      name: `Sheet ${spreadsheets.length + 1}`,
       data: JSON.stringify(newSpreadsheetState),
     };
 
@@ -242,53 +266,56 @@ function App() {
           <Grid />
         )}
       </div>
-      <div className="p-4  border-b flex justify-between">
+      <div className=" p-1 border-t  flex justify-between">
+        
         <div className="flex items-center">
+        <button
+            onClick={createNewSpreadsheet}
+            className="ml-2 p-2  rounded"
+          >
+            <Plus size={16}/>
+          </button>
           <select
-            value={currentSpreadsheetId || ''}
+            value={currentSpreadsheetId || 'Sheet 1'}
             onChange={(e) => loadSpreadsheet(e.target.value)}
-            className="p-2 border rounded"
+            className="rounded text-sm  px-3 border-r"
+
           >
             {spreadsheets.map(sp => (
               <option key={sp.id} value={sp.id}>{sp.name}</option>
             ))}
           </select>
-          <button
-            onClick={createNewSpreadsheet}
-            className="ml-2 p-2 bg-blue-500 text-white rounded"
-          >
-            New Spreadsheet
-          </button>
+     
           {currentSpreadsheetId && (
             <>
               <button
                 onClick={() => deleteSpreadsheet(currentSpreadsheetId)}
-                className="ml-2 p-2 bg-red-500 text-white rounded"
+                className="ml-2 "
               >
-                Delete Spreadsheet
+                <Trash2Icon size={18}/>
               </button>
               <input
                 type="text"
                 value={renameInput}
                 onChange={(e) => setRenameInput(e.target.value)}
                 placeholder="Rename spreadsheet"
-                className="ml-2 p-2 border rounded"
+                className="ml-2 px-3 border rounded"
               />
               <button
                 onClick={() => {
                   renameSpreadsheet(currentSpreadsheetId, renameInput);
                   setRenameInput('');
                 }}
-                className="ml-2 p-2 bg-yellow-500 text-white rounded"
+                className="ml-2 "
               >
-                Rename
+                <Edit2Icon  size={18}/>
               </button>
-              <button
+              {/* <button
                 onClick={() => setShowChart(!showChart)}
                 className="ml-2 p-2 bg-purple-500 text-white rounded"
               >
                 {showChart ? 'Hide Chart' : 'Show Chart'}
-              </button>
+              </button> */}
             </>
           )}
         </div>
