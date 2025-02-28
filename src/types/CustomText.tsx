@@ -4,6 +4,7 @@ interface CustomTextProps {
 	color?: string;
 	className?: any;
 	onClick?: () => void;
+    onDoubleClick?: () => void;
 	style?: any;
 	id?: any;
 	type?:
@@ -24,7 +25,7 @@ interface CustomTextProps {
 		| '';
 }
 
-const CustomText = ({ children, style, color, type, className, onClick, id, ...rest }: CustomTextProps) => {
+const CustomText = ({ children, style, color, type, className,onDoubleClick, onClick, id, ...rest }: CustomTextProps) => {
 	let customStyle;
 
 	switch (type) {
@@ -78,6 +79,7 @@ const CustomText = ({ children, style, color, type, className, onClick, id, ...r
 	return (
 		<p
 			onClick={onClick}
+            onDoubleClick={onDoubleClick}
 			className={className}
 			style={{
 				color: color ? color : style.color,
